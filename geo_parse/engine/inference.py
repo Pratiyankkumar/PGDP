@@ -32,7 +32,8 @@ def compute_on_dataset(cfg, model, data_loader, device, timer=None):
                 # targets_det = [target.to(device) for target in targets_det] 
                 # output = model(images.to(device), targets_det, targets_seg)
             if timer:
-                torch.cuda.synchronize()
+                if torch.cuda.is_available():
+                    torch.cuda.synchronize()
                 timer.toc() 
 
         results_dict.update(

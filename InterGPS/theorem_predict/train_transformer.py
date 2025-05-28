@@ -17,7 +17,8 @@ tokenizer = BartTokenizerFast.from_pretrained('facebook/bart-base')
 
 def setup_seed(seed):
     torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    if torch.cuda.is_available():  # Make this conditional
+        torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     output_path = "models/"
     os.makedirs(output_path, exist_ok=True)
 
-    device = torch.device('cuda:0')
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     tokenizer = BartTokenizerFast.from_pretrained('facebook/bart-base')
 

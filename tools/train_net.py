@@ -36,12 +36,17 @@ def train(cfg, local_rank, distributed):
     scheduler = make_lr_scheduler(cfg, optimizer)
 
     if distributed:
-        model = torch.nn.parallel.DistributedDataParallel(
-            model, device_ids=[local_rank], output_device=local_rank,
-            # this should be removed if we update BatchNorm stats
-            # broadcast_buffers=False,
-            find_unused_parameters=True,
-        )
+        # FIX: Handle both CUDA and CPU distributed training
+        if torch.cuda.is_available() and device.type == 'cuda':
+            model = torch.nn.parallel.DistributedDataParallel(
+                model, device_ids=[local_rank], output_device=local_rank,
+                find_unused_parameters=True,
+            )
+        else:
+            # CPU distributed training - no device_ids needed
+            model = torch.nn.parallel.DistributedDataParallel(
+                model, find_unused_parameters=True,
+            )
 
     arguments = {}
     arguments["iteration"] = 0
@@ -80,7 +85,9 @@ def run_test(cfg, model, distributed):
     if distributed:
         model = model.module
 
-    torch.cuda.empty_cache()  # TODO check if it helps
+    # FIX: Make CUDA cache clearing conditional
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()  # TODO check if it helps
     output_folders = [None] * len(cfg.DATASETS.TEST)
     dataset_names = cfg.DATASETS.TEST
 
@@ -132,10 +139,17 @@ def main():
     args.distributed = num_gpus > 1
 
     if args.distributed:
-        torch.cuda.set_device(args.local_rank) 
-        torch.distributed.init_process_group(
-            backend="nccl", init_method="env://"
-        )
+        # FIX: Make distributed setup CPU-compatible
+        if torch.cuda.is_available():
+            torch.cuda.set_device(args.local_rank) 
+            torch.distributed.init_process_group(
+                backend="nccl", init_method="env://"
+            )
+        else:
+            # Use CPU backend for distributed training
+            torch.distributed.init_process_group(
+                backend="gloo", init_method="env://"
+            )
         synchronize()
 
     cfg.merge_from_file(args.config_file)

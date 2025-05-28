@@ -66,7 +66,7 @@ class GeneralizedRCNN(nn.Module):
         proposals_det, proposal_det_losses = self.rpn(images, features[1:], targets_det)
 
         loc_map = self.location_map[:,:features[0].shape[2],:features[0].shape[3]].contiguous()
-        loc_map = loc_map.expand(len(features[0]),-1,-1,-1).cuda()
+        loc_map = loc_map.expand(len(features[0]),-1,-1,-1)
         
         features_share = torch.cat((features[0], loc_map), 1)
 

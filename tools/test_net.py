@@ -39,10 +39,17 @@ def main():
     distributed = num_gpus > 1
 
     if distributed:
-        torch.cuda.set_device(args.local_rank)
-        torch.distributed.init_process_group(
-            backend="nccl", init_method="env://"
-        )
+        # FIX: Make CUDA calls conditional
+        if torch.cuda.is_available():
+            torch.cuda.set_device(args.local_rank)
+            torch.distributed.init_process_group(
+                backend="nccl", init_method="env://"
+            )
+        else:
+            # Use CPU backend for distributed training
+            torch.distributed.init_process_group(
+                backend="gloo", init_method="env://"
+            )
         synchronize()
 
     cfg.merge_from_file(args.config_file)
@@ -51,7 +58,13 @@ def main():
 
     save_dir = ""
     logger = setup_logger("geo_parse", save_dir, get_rank())
-    logger.info("Using {} GPUs".format(num_gpus))
+    
+    # FIX: Update logging message for CPU compatibility
+    if torch.cuda.is_available():
+        logger.info("Using {} GPUs".format(num_gpus))
+    else:
+        logger.info("Using CPU (no GPUs available)")
+    
     logger.info(cfg)
 
     logger.info("Collecting env info (might take some time)")

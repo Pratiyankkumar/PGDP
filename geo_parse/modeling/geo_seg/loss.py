@@ -39,7 +39,7 @@ class SegLossComputation(object):
         ########################binary_seg################################
         binary_seg_loss = binary_seg.new([0]).zero_().squeeze()
         for i in range(self.class_num):
-            seg_loss_func_cur = self.seg_loss_func[i].cuda()
+            seg_loss_func_cur = self.seg_loss_func[i]
             input = binary_seg[:,i,:,:]
             target = []
             for ggeo in targets:
@@ -47,7 +47,7 @@ class SegLossComputation(object):
                                         class_index = i+1,
                                         reshape_size = reshape_size)
                             )
-            target = torch.from_numpy(np.stack(target,axis=0)).float().cuda()
+            target = torch.from_numpy(np.stack(target,axis=0)).float()
             binary_seg_loss = binary_seg_loss + seg_loss_func_cur(input, target)
 
         ########################embedding_seg################################
