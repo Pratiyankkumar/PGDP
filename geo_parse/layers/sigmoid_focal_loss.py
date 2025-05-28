@@ -39,8 +39,11 @@ sigmoid_focal_loss_cuda = _SigmoidFocalLoss.apply
 
 def sigmoid_focal_loss_cpu(logits, targets, gamma, alpha):
     num_classes = logits.shape[1]
-    gamma = gamma[0]
-    alpha = alpha[0]
+    
+    # FIX: Handle both tensor and scalar cases for CPU compatibility
+    gamma = gamma[0] if hasattr(gamma, '__getitem__') and len(gamma) > 0 else gamma
+    alpha = alpha[0] if hasattr(alpha, '__getitem__') and len(alpha) > 0 else alpha
+    
     dtype = targets.dtype
     device = targets.device
     class_range = torch.arange(1, num_classes+1, dtype=dtype, device=device).unsqueeze(0)
