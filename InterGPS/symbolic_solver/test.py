@@ -28,7 +28,7 @@ def getParameters():
                         help="different search strategies")
 
     # input data
-    parser.add_argument("--data_path", type=str, default="/lustre/home/mlzhang/GeoMathQA/InterGPS/data/geometry3k/", help="the path of geometry3k")
+    parser.add_argument("--data_path", type=str, default="/data/data/geometry3k/", help="the path of geometry3k")
     parser.add_argument("--text_logic_form_path", type=str, help="the path of text logic forms")
     parser.add_argument("--diagram_logic_form_path", type=str, help="the path of diagram logic forms")
 

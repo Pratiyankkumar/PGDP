@@ -179,9 +179,9 @@ def diagram_evaluaion(graph_gt, graph_test):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='evaluate')
-    parser.add_argument('--test_set_path', default="/lustre/home/mlzhang/Datasets/PGDP5K/test")
-    parser.add_argument('--diagram_gt', default="/lustre/home/mlzhang/Datasets/PGDP5K/our_diagram_logic_forms_annot.json")
-    parser.add_argument('--diagram_pred', default="/lustre/home/mlzhang/GeoMathQA/Geo_parsing_GAT/inference/PGDP5K_geo_MNV2_FPN_2x_VIS_SEM_LOC_large_24/model_final.pth_True_1_0.5/logic_forms_pred.json")
+    parser.add_argument('--test_set_path', default="/data/data/PGDP5K/test")
+    parser.add_argument('--diagram_gt', default="/data/data/PGDP5K/our_diagram_logic_forms_annot.json") 
+    parser.add_argument('--diagram_pred', default="/data/inference_output/logic_forms_pred.json")
     parser = parser.parse_args()
 
     with open(parser.diagram_gt, "r") as f1:

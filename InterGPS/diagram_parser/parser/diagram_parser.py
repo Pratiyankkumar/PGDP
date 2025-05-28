@@ -108,10 +108,10 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Main program for diagram parsing')
 
-    parser.add_argument('--data_path', default='/lustre/home/mlzhang/GeoMathQA/InterGPS/data/geometry3k')
-    parser.add_argument('--ocr_path', default='/lustre/home/mlzhang/GeoMathQA/InterGPS/diagram_parser/detection_results/ocr_results')
-    parser.add_argument('--box_path', default='/lustre/home/mlzhang/GeoMathQA/InterGPS/diagram_parser/detection_results/box_results')
-    parser.add_argument('--output_path', default='diagram_logic_form.json')
+    parser.add_argument('--data_path', default='/data/data/geometry3k')
+    parser.add_argument('--ocr_path', default='/data/detection_results/ocr_results')
+    parser.add_argument('--box_path', default='/data/detection_results/box_results')
+    parser.add_argument('--output_path', default='/data/inference_output/diagram_logic_form.json')
     
     parser = parser.parse_args()
         
